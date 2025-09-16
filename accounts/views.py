@@ -3,9 +3,11 @@ from django.contrib.auth import login as auth_login, authenticate, logout as aut
 from .forms import CustomUserCreationForm, CustomErrorList
 
 # from django.contrib.auth.forms import UserCreationForm
-from django.shortcuts import redirect
+from django.shortcuts import redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
+from .forms import MovieRequestForm
+from .models import MovieRequest
 
 
 @login_required
@@ -59,3 +61,30 @@ def orders(request):
     template_data["title"] = "Orders"
     template_data["orders"] = request.user.order_set.all()
     return render(request, "accounts/orders.html", {"template_data": template_data})
+
+
+@login_required
+def add_movie_request(request):
+    if request.method == "POST":
+        form = MovieRequestForm(request.POST)
+        if form.is_valid():
+            movie_request = form.save(commit=False)
+            movie_request.user = request.user
+            movie_request.save()
+            return redirect("accounts.my_requests")
+    else:
+        form = MovieRequestForm()
+    return render(request, "accounts/add_movie_request.html", {"form": form})
+
+
+@login_required
+def my_requests(request):
+    requests = MovieRequest.objects.filter(user=request.user)
+    return render(request, "accounts/my_requests.html", {"requests": requests})
+
+
+@login_required
+def delete_request(request, pk):
+    r = get_object_or_404(MovieRequest, pk=pk, user=request.user)
+    r.delete()
+    return redirect("accounts.my_requests")

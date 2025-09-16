@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="p-3">
+    <div class="container">
+        <div class="row mt-3">
+            <div class="col mx-auto mb-3">
+                <h2>My Movie Requests</h2>
+                <hr />
+                <ul class="list-group">
+                    {% for r in requests %}
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                        <span>
+                            <strong>{{ r.movie_name }}</strong> — {{ r.reason }}
+                        </span>
+                        <form action="{% url 'delete_request' r.pk %}" method="post" style="display:inline;">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-sm btn-danger">
+                                Delete
+                            </button>
+                        </form>
+                    </li>
+                    {% empty %}
+                    <li class="list-group-item text-muted">No requests yet.</li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock content %}
