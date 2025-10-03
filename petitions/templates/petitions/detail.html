@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% block content %}
+  <h1>{{ petition.title }}</h1>
+  <p>{{ petition.description }}</p>
+  <p><strong>Yes:</strong> {{ petition.yes_count }}</p>
+
+  {% if user.is_authenticated %}
+    {% if user_has_voted %}
+      <p class="text-muted">You already voted YES.</p>
+    {% else %}
+      <form method="post" action="{% url 'petitions:vote_yes' petition.pk %}">
+        {% csrf_token %}
+        <button class="btn btn-primary" type="submit">Vote YES</button>
+      </form>
+    {% endif %}
+  {% else %}
+    <p><a href="{% url 'accounts.login' %}">Log in</a> to vote.</p>
+  {% endif %}
+
+  <p class="mt-3"><a href="{% url 'petitions:list' %}">Back to list</a></p>
+{% endblock %}
