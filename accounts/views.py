@@ -1,13 +1,10 @@
 from django.shortcuts import render
 from django.contrib.auth import login as auth_login, authenticate, logout as auth_logout
-from .forms import CustomUserCreationForm, CustomErrorList
-
-# from django.contrib.auth.forms import UserCreationForm
+from .forms import CustomUserCreationForm, CustomErrorList, UserProfileForm, MovieRequestForm
 from django.shortcuts import redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
-from .forms import MovieRequestForm
-from .models import MovieRequest
+from .models import MovieRequest, UserProfile
 
 
 @login_required
@@ -88,3 +85,26 @@ def delete_request(request, pk):
     r = get_object_or_404(MovieRequest, pk=pk, user=request.user)
     r.delete()
     return redirect("accounts.my_requests")
+
+
+# profile
+@login_required
+def profile(request):
+    # Get or create user profile
+    user_profile, created = UserProfile.objects.get_or_create(user=request.user)
+    
+    if request.method == "POST":
+        form = UserProfileForm(request.POST, instance=user_profile)
+        if form.is_valid():
+            form.save()
+            return redirect("accounts.profile")
+    else:
+        form = UserProfileForm(instance=user_profile)
+    
+    return render(request, "accounts/profile.html", {
+        "template_data": {
+            "title": "Your Profile",
+            "form": form
+        },
+        "user_profile": user_profile
+    })

@@ -11,4 +11,5 @@ urlpatterns = [
     ),
     path("movie_request/my/", views.my_requests, name="accounts.my_requests"),
     path("movie_request/<int:pk>/delete/", views.delete_request, name="delete_request"),
+    path("profile/", views.profile, name="accounts.profile"),
 ]
