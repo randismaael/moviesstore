@@ -7,8 +7,9 @@
             <div class="col-md-6 mx-auto mb-3">
                 <h2>{{ template_data.movie.name }}</h2>
                 <hr />
-                <p><b>Description:</b> {{template_data.movie.description }}</p>
-                <p><b>Price:</b> ${{template_data.movie.price }}</p>
+                <p><b>Description:</b> {{ template_data.movie.description }}</p>
+                <p><b>Price:</b> ${{ template_data.movie.price }}</p>
+
                 <p class="card-text">
                 <form method="post" action="{% url 'cart.add' id=template_data.movie.id %}">
                     {% csrf_token %}
@@ -28,33 +29,60 @@
                     </div>
                 </form>
                 </p>
+
+                <!-- ================== RATING (NEW) ================== -->
+                <h2>Rating</h2>
+                <hr />
+                <p class="mb-2">
+                    Average rating:
+                    <b>{{ template_data.avg_rating|floatformat:1 }}</b> / 5
+                    ({{ template_data.ratings_count }} ratings)
+                </p>
+
+                {% if user.is_authenticated %}
+                <form method="post" action="{% url 'movies.rate' id=template_data.movie.id %}" class="mb-4">
+                    {% csrf_token %}
+                    <div class="mb-2">
+                        {{ template_data.rating_form.value }}
+                    </div>
+                    <button type="submit" class="btn btn-outline-dark btn-sm">Submit rating</button>
+                    {% if template_data.user_rating %}
+                    <span class="ms-2">Your rating: <b>{{ template_data.user_rating.value }}★</b></span>
+                    {% endif %}
+                </form>
+                {% else %}
+                <p>
+                    <a href="{% url 'login' %}?next={{ request.path }}">Log in</a> to rate this movie.
+                </p>
+                {% endif %}
+                <!-- =============== END RATING (NEW) ================ -->
+
                 <h2>Reviews</h2>
                 <hr />
 
                 <ul class="list-group">
                     {% for review in template_data.reviews %}
                     <li class="list-group-item pb-3 pt-3">
-                        <h5 class="card-title">
-                            Review by {{ review.user.username }}
-                        </h5>
-                        <h6 class="card-subtitle mb-2 text-muted">
-                            {{ review.date }}
-                        </h6>
-                        <p class="card-text">
-                            {{ review.comment }}
-                        </p>
+                        <h5 class="card-title">Review by {{ review.user.username }}</h5>
+                        <h6 class="card-subtitle mb-2 text-muted">{{ review.date }}</h6>
+                        <p class="card-text">{{ review.comment }}</p>
+
                         {% if user.is_authenticated and user == review.user %}
                         <a class="btn btn-primary"
                             href="{% url 'movies.edit_review' id=template_data.movie.id review_id=review.id %}">
                             Edit
                         </a>
                         <a class="btn btn-danger"
-                            href="{% url 'movies.delete_review' id=template_data.movie.id review_id=review.id %}">Delete
+                            href="{% url 'movies.delete_review' id=template_data.movie.id review_id=review.id %}">
+                            Delete
                         </a>
                         {% endif %}
                     </li>
+                    {% empty %}
+                    <li class="list-group-item">No reviews yet.</li>
                     {% endfor %}
                 </ul>
+
                 {% if user.is_authenticated %}
                 <div class="container mt-4">
                     <div class="row justify-content-center">
@@ -85,6 +113,7 @@
                 </div>
                 {% endif %}
             </div>
+
             <div class="col-md-6 mx-auto mb-3 text-center">
                 <img src="{{ template_data.movie.image.url }}" class="rounded img-card-400" />
             </div>
