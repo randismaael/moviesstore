@@ -48,3 +48,81 @@
     width: fit-content;
     max-height: 400px;
 }
+
+/* --- Brand helpers --- */
+.text-cream {
+    color: #FFFEF6 !important;
+}
+
+.bg-carbon {
+    background-color: #202020 !important;
+}
+
+/* darker than .bg-dark */
+.btn-ms {
+    --ms-accent: #6ab43e;
+    color: #FFFEF6;
+    background-color: var(--ms-accent);
+    border-color: var(--ms-accent);
+}
+
+.btn-ms:hover {
+    filter: brightness(1.06);
+    color: #FFFEF6;
+}
+
+/* --- Rating card --- */
+.card-ms {
+    background-color: #2E2E2E;
+    /* matches .bg-dark */
+    color: #FFFEF6;
+    border: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.card-ms .text-muted {
+    color: #7F7F7F !important;
+}
+
+/* --- Read-only stars (average) --- */
+.stars-readonly {
+    display: inline-flex;
+    gap: .125rem;
+    line-height: 1;
+    font-size: 1.2rem;
+    color: #6ab43e;
+}
+
+.stars-readonly .star-muted {
+    color: #4a4a4a;
+}
+
+/* --- Interactive star input (your rating) --- */
+.star-input {
+    direction: rtl;
+    display: inline-flex;
+    gap: .25rem;
+}
+
+.star-input input[type="radio"] {
+    display: none;
+}
+
+.star-input label {
+    font-size: 1.8rem;
+    cursor: pointer;
+    color: #4a4a4a;
+    /* unselected */
+    margin: 0;
+    line-height: 1;
+}
+
+/* hover fill (lighter green) */
+.star-input label:hover,
+.star-input label:hover~label {
+    color: #7bd24a;
+}
+
+/* selected fill (brand green) */
+.star-input input[type="radio"]:checked~label {
+    color: #6ab43e;
+}
